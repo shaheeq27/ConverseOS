@@ -27,7 +27,7 @@ export default async function ProjectLayout({
   );
 
   return (
-    <div className="flex h-screen bg-[#0a0a0f] overflow-hidden">
+    <div className="flex flex-col md:flex-row h-screen bg-[#0a0a0f] overflow-hidden">
       <ProjectSidebar
         slug={params.slug}
         projectName={project.name}

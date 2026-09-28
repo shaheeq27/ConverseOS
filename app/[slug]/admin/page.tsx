@@ -2,22 +2,53 @@
 
 import { useDashboard, useToggleIntegration } from "@/hooks";
 import { DashboardSection, DashboardWidget } from "@/types";
-import toast from "react-hot-toast";
+import { toast } from "@/components/ui/Toast";
 import { clsx } from "clsx";
+
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function AdminDashboardPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const { data, isLoading, isError, refetch } = useDashboard(params.slug);
+  const { data, isLoading, isError, refetch, isFetching } = useDashboard(params.slug);
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center" data-testid="dashboard-loading">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-white/10 border-t-cyan-400 rounded-full animate-spin" />
-          <p className="text-sm text-[#9090a8]">Loading dashboard config…</p>
+      <div className="flex-1 overflow-y-auto" data-testid="dashboard-loading">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          {/* Header Skeleton */}
+          <div className="flex items-center justify-between mb-8">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-9 w-32 rounded-xl" />
+          </div>
+
+          {/* Section 1 Skeleton */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <Skeleton className="w-8 h-8 rounded-lg" />
+              <Skeleton className="h-6 w-32" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          </div>
+
+          {/* Section 2 Skeleton */}
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <Skeleton className="w-8 h-8 rounded-lg" />
+              <Skeleton className="h-6 w-40" />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-64 w-full" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -45,6 +76,7 @@ export default function AdminDashboardPage({
     recentMessages: Array<{ _id: string; role: string; content: string; createdAt: string }>;
     integrations: Array<{ type: string; name: string; enabled: boolean }>;
     members: Array<{ userId: string; role: string; user?: { name: string; avatarColor: string } }>;
+    activity: Array<{ date: string; count: number }>;
   };
 
   if (!config) {
@@ -57,6 +89,11 @@ export default function AdminDashboardPage({
 
   // Sort sections by order
   const sortedSections = [...config.sections].sort((a, b) => a.order - b.order);
+
+  const handleRefresh = async () => {
+    await refetch();
+    toast.success("Dashboard refreshed");
+  };
 
   return (
     <div className="flex-1 overflow-y-auto" data-testid="admin-dashboard">
@@ -71,7 +108,7 @@ export default function AdminDashboardPage({
           </div>
           <h1
             className="text-2xl font-bold text-white"
-            style={{ fontFamily: "'Syne', sans-serif" }}
+            
             data-testid="dashboard-title"
           >
             {config.title}
@@ -85,13 +122,14 @@ export default function AdminDashboardPage({
           </p>
         </div>
         <button
-          onClick={() => refetch()}
-          className="flex items-center gap-2 px-4 py-2 text-xs text-[#9090a8] hover:text-white bg-white/5 hover:bg-white/8 border border-white/5 rounded-xl transition-all"
+          onClick={handleRefresh}
+          disabled={isFetching}
+          className="flex items-center gap-2 px-4 py-2 text-xs text-[#9090a8] hover:text-white bg-white/5 hover:bg-white/8 border border-white/5 rounded-xl transition-all disabled:opacity-50"
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={clsx(isFetching && "animate-spin")}>
             <path d="M1 6a5 5 0 105-5 5 5 0 00-3.5 1.4M1 2.5V5h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Refresh
+          {isFetching ? "Refreshing..." : "Refresh"}
         </button>
       </div>
 
@@ -122,6 +160,7 @@ function DashboardSectionRenderer({
     stats: Record<string, number>;
     recentMessages: Array<{ _id: string; role: string; content: string; createdAt: string }>;
     integrations: Array<{ type: string; name: string; enabled: boolean }>;
+    activity: Array<{ date: string; count: number }>;
   };
   slug: string;
   sectionIdx: number;
@@ -139,7 +178,7 @@ function DashboardSectionRenderer({
         <SectionIcon icon={section.icon} />
         <h2
           className="text-base font-bold text-white"
-          style={{ fontFamily: "'Syne', sans-serif" }}
+          
         >
           {section.label}
         </h2>
@@ -174,6 +213,7 @@ function WidgetRenderer({
     stats: Record<string, number>;
     recentMessages: Array<{ _id: string; role: string; content: string; createdAt: string }>;
     integrations: Array<{ type: string; name: string; enabled: boolean }>;
+    activity: Array<{ date: string; count: number }>;
   };
   slug: string;
   widgetIdx: number;
@@ -204,7 +244,7 @@ function WidgetRenderer({
         <MessageLogCard messages={stats?.recentMessages ?? []} label={widget.label} />
       )}
       {widget.type === "activity-chart" && (
-        <ActivityChartCard label={widget.label} />
+        <ActivityChartCard label={widget.label} activity={stats?.activity ?? []} />
       )}
     </div>
   );
@@ -242,7 +282,7 @@ function StatCard({ label, value, dataKey }: { label: string; value: number; dat
         </div>
         <div
           className="text-3xl font-bold mb-1"
-          style={{ fontFamily: "'Syne', sans-serif", color: meta.color }}
+          style={{ color: meta.color }}
         >
           {value.toLocaleString()}
         </div>
@@ -252,12 +292,21 @@ function StatCard({ label, value, dataKey }: { label: string; value: number; dat
   );
 }
 
+const INTEGRATION_ICONS: Record<string, string> = {
+  shopify: "🛒",
+  crm: "👤",
+};
+
+function getIntegrationIcon(type: string): string {
+  return INTEGRATION_ICONS[type.toLowerCase()] || "🔌";
+}
+
 function IntegrationStatusCard({ integrations }: { integrations: Array<{ type: string; name: string; enabled: boolean }> }) {
   return (
     <div className="glass rounded-2xl p-5 border border-white/5" data-testid="integration-status-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">🔌</span>
-        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <span className="text-sm font-semibold text-white" >
           Integration Status
         </span>
       </div>
@@ -268,7 +317,7 @@ function IntegrationStatusCard({ integrations }: { integrations: Array<{ type: s
         {integrations.map((integ) => (
           <div key={integ.type} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm">{integ.type === "shopify" ? "🛒" : "👤"}</span>
+              <span className="text-sm">{getIntegrationIcon(integ.type)}</span>
               <span className="text-sm text-[#e0e0ed]">{integ.name}</span>
             </div>
             <div
@@ -310,7 +359,7 @@ function IntegrationToggleCard({
     <div className="glass rounded-2xl p-5 border border-white/5" data-testid="integration-toggle-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">⚙️</span>
-        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <span className="text-sm font-semibold text-white" >
           Toggle Integrations
         </span>
       </div>
@@ -349,7 +398,7 @@ function MessageLogCard({
     <div className="glass rounded-2xl p-5 border border-white/5 md:col-span-2 xl:col-span-3" data-testid="message-log-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">📋</span>
-        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <span className="text-sm font-semibold text-white" >
           {label}
         </span>
         <span className="ml-auto text-xs text-[#5a5a72]">{messages.length} messages</span>
@@ -385,25 +434,32 @@ function MessageLogCard({
   );
 }
 
-function ActivityChartCard({ label }: { label: string }) {
-  // Simple ASCII-style bar chart with mock data
-  const bars = [40, 65, 45, 80, 55, 90, 70];
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const max = Math.max(...bars);
+function ActivityChartCard({ label, activity }: { label: string, activity?: Array<{ date: string; count: number }> }) {
+  const data = activity && activity.length === 7 ? activity : Array(7).fill({ date: "-", count: 0 });
+  const bars = data.map(d => d.count);
+  
+  const days = data.map(a => {
+    if (a.date === "-") return "-";
+    const [y, m, d] = a.date.split('-');
+    const localDate = new Date(Number(y), Number(m) - 1, Number(d));
+    return localDate.toLocaleDateString('en-US', { weekday: 'short' });
+  });
+  
+  const max = Math.max(...bars, 10);
 
   return (
     <div className="glass rounded-2xl p-5 border border-white/5" data-testid="activity-chart-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">📈</span>
-        <span className="text-sm font-semibold text-white" style={{ fontFamily: "'Syne', sans-serif" }}>
+        <span className="text-sm font-semibold text-white" >
           {label}
         </span>
       </div>
       <div className="flex items-end gap-1.5 h-20">
         {bars.map((val, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-1">
+          <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
             <div
-              className="w-full rounded-sm transition-all duration-500"
+              className="w-full rounded-sm transition-all duration-500 hover:opacity-80"
               style={{
                 height: `${(val / max) * 64}px`,
                 background: `linear-gradient(to top, rgba(34,211,238,0.6), rgba(139,92,246,0.4))`,
@@ -411,6 +467,9 @@ function ActivityChartCard({ label }: { label: string }) {
               }}
             />
             <span className="text-[9px] text-[#5a5a72]">{days[i]}</span>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+              {val} msgs
+            </div>
           </div>
         ))}
       </div>

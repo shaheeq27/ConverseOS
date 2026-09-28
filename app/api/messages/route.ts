@@ -105,12 +105,21 @@ export async function POST(req: NextRequest) {
   const integrations = productInstance?.integrations ?? [];
 
   // Call AI service (controlled flow)
-  const { content, steps } = await generateAIResponse({
-    userMessage: parsed.data.content,
-    conversationHistory: historyForAI,
-    integrations: integrations as Parameters<typeof generateAIResponse>[0]["integrations"],
-    projectName: project.name,
-  });
+  let content: string;
+  let steps: string[] = [];
+  try {
+    const aiRes = await generateAIResponse({
+      userMessage: parsed.data.content,
+      conversationHistory: historyForAI,
+      integrations: integrations as Parameters<typeof generateAIResponse>[0]["integrations"],
+      projectName: project.name,
+    });
+    content = aiRes.content;
+    steps = aiRes.steps;
+  } catch (err) {
+    content = "Sorry, I’m unable to respond right now. Please try again in a moment.";
+    steps = ["Analyzing your message...", "Providers unavailable"];
+  }
 
   // Save assistant message
   const assistantMsg = await saveMessage({

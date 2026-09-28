@@ -47,7 +47,7 @@ export default function ChatIndexPage({
 
         <h2
           className="text-2xl font-bold text-white mb-2"
-          style={{ fontFamily: "'Syne', sans-serif" }}
+          
         >
           AI Sales Assistant
         </h2>
@@ -82,7 +82,7 @@ function NewChatButton({ slug }: { slug: string }) {
     <button
       onClick={startChat}
       className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-      style={{ fontFamily: "'Syne', sans-serif" }}
+      
     >
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <path d="M8 3v10M3 8h10" stroke="white" strokeWidth="2" strokeLinecap="round"/>

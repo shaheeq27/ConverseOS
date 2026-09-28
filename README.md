@@ -1,173 +1,127 @@
-# 🤖 Debales AI — Multi-tenant AI Sales Assistant
+# ⚡ ConverseOS — The Enterprise AI Operating System
 
-A well-structured, multi-tenant AI assistant platform built for the Debales AI internship assignment. Built with Next.js 14 App Router, MongoDB, TypeScript, and a real AI API.
-
-## 🎥 Demo Video
-https://www.loom.com/share/fa3adc32f32e448c9a904db13e1555e0
-
-> Demonstrates MongoDB-driven admin dashboard where UI updates instantly after editing the database config.
+> **ConverseOS** is a production-ready, enterprise-grade AI workspace enabling organizations to create, deploy, manage, and orchestrate intelligent AI assistants, knowledge bases, workflows, and real-time business integrations.
 
 ---
 
-## 🎯 Core Requirement Highlight
+## 🌟 Master Vision & Roadmap
 
-The admin dashboard is fully config-driven from MongoDB (dashboardconfigs collection).
+ConverseOS is designed around a multi-phase master roadmap evolving from a multi-tenant AI foundation into a full-scale **Enterprise AI Operating System**.
 
-- No UI is hardcoded  
-- Layout, sections, and widgets are dynamically rendered  
-- Editing the MongoDB document updates the UI instantly without redeploy  
+### Core Architecture Highlights
 
-This is demonstrated clearly in the demo video.
-
----
-
-## ✨ What Makes This Stand Out
-
-- Config-driven admin dashboard — edit one MongoDB document and the dashboard layout changes instantly, no redeploy needed  
-- Layered architecture — Access → Services → Routes → Hooks → UI (strictly enforced)  
-- Real AI integration — Gemini 1.5 Flash with OpenRouter fallback and smart mock fallback  
-- Two live integration simulations — Shopify-style (product/order data) + CRM-style (customer pipeline)  
-- Multi-tenant — projects are fully isolated; users are scoped with roles  
-- Clean UI — custom design system with Tailwind and smooth interactions  
+- **Config-Driven Dashboard**: The admin dashboard is fully dynamically rendered from MongoDB (`dashboardconfigs` collection). No layout or widget structure is hardcoded.
+- **Layered Enterprise Architecture**: Strict layer boundaries — Authorization Rules (`access/`) ➔ Services (`services/`) ➔ Route Handlers (`api/`) ➔ Custom Hooks (`hooks/`) ➔ UI Components (`components/`).
+- **Multi-Model AI Orchestration**: Google Gemini 1.5 Flash integration with OpenRouter fallbacks and smart mock providers.
+- **Isolated Multi-Tenant Security**: Tenant boundaries scoped by URL slugs with role-based access control (Admin / Member).
 
 ---
 
-## 🏗 Architecture
+## 🏗 Architecture Blueprint
 
-┌─────────────────────────────────────────────────────────┐ │  UI Layer  (React + TanStack Query — no direct DB calls) │ ├─────────────────────────────────────────────────────────┤ │  Hooks     (TanStack Query mutations & queries)          │ ├─────────────────────────────────────────────────────────┤ │  Routes    (Next.js Route Handlers — thin, Zod-validated)│ ├─────────────────────────────────────────────────────────┤ │  Services  (Business logic + DB access + AI orchestration)│ ├─────────────────────────────────────────────────────────┤ │  Access    (Pure authz rules — no I/O, no DB calls)      │ ├─────────────────────────────────────────────────────────┤ │  MongoDB   (Mongoose models with Zod-aligned types)      │ └─────────────────────────────────────────────────────────┘
-
----
-
-## 🏢 Multi-tenant Model
-
-Project (tenant boundary, identified by slug)   └── Members [{ userId, role: admin|member }]   └── ProductInstances         └── integrations [{ type, enabled, config }]         └── namespace   └── Conversations (scoped to project + productInstance + user)         └── Messages   └── DashboardConfig ← drives admin UI layout
+```
+┌─────────────────────────────────────────────────────────────┐
+│  UI Layer (React + TanStack Query — no direct DB calls)     │
+├─────────────────────────────────────────────────────────────┤
+│  Hooks Layer (TanStack Query mutations & query handlers)    │
+├─────────────────────────────────────────────────────────────┤
+│  Route Layer (Next.js Route Handlers — Zod validated)       │
+├─────────────────────────────────────────────────────────────┤
+│  Service Layer (Business logic + DB access + AI engine)     │
+├─────────────────────────────────────────────────────────────┤
+│  Access Layer (Pure authz functions — no side effects)      │
+├─────────────────────────────────────────────────────────────┤
+│  Data Layer (Mongoose schemas & MongoDB collections)        │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Clone & Install
+### 1. Clone & Install Dependencies
 
-bash git clone https://github.com/shaheeq27/debates-ai-Full-Stack-Assignment.git cd debates-ai-Full-Stack-Assignment npm install 
+```bash
+git clone https://github.com/shaheeq27/debates-ai-Full-Stack-Assignment.git
+cd debates-ai-Full-Stack-Assignment
+npm install
+```
 
----
+### 2. Environment Configuration
 
-### 2. Environment Variables
+Copy `.env.example` to `.env`:
 
-Copy .env.example to .env and fill in:
+```bash
+cp .env.example .env
+```
 
-bash cp .env.example .env 
+Set the required environment variables:
 
 | Variable | Required | Description |
 |---|---|---|
-| MONGODB_URI | ✅ Yes | MongoDB Atlas connection string |
-| AUTH_SECRET | ✅ Yes | Any random 32+ char string |
-| GEMINI_API_KEY | Optional | Free key from Google AI Studio |
-| OPENROUTER_API_KEY | Optional | Fallback AI |
-| NEXT_PUBLIC_APP_URL | Optional | Default: http://localhost:3000 |
-
-> If no AI keys are provided, the app uses a mock response system.
-
----
+| `MONGODB_URI` | ✅ Yes | MongoDB connection string |
+| `AUTH_SECRET` | ✅ Yes | Random 32+ character secret |
+| `GEMINI_API_KEY` | Optional | Free key from Google AI Studio |
+| `OPENROUTER_API_KEY` | Optional | OpenRouter fallback key |
+| `NEXT_PUBLIC_APP_URL` | Optional | Application URL (Default: `http://localhost:3000`) |
 
 ### 3. Seed Database
 
-bash npm run seed 
+Populate MongoDB with demo organizations, users, product instances, conversations, and dynamic dashboard configurations:
 
-Creates:
-- Users (admin + member)
-- Projects
-- Product instances
-- Conversations & messages
-- Dashboard config (core feature)
+```bash
+npm run seed
+```
 
----
+### 4. Start Development Server
 
-### 4. Run
+```bash
+npm run dev
+```
 
-bash npm run dev 
-
-Open: http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000) to view the ConverseOS Landing Page.
 
 ---
 
-## 🔑 Demo Accounts
+## 🔑 Demo Access Accounts
 
-| User | Role | Access |
-|---|---|---|
-| Alice | Admin | Full access |
-| Bob | Admin/Member | Mixed access |
-| Carol | Member | No admin |
-
----
-
-## 📊 Config-driven Admin Dashboard
-
-The admin dashboard is dynamically rendered from MongoDB.
-
-### How to verify:
-
-1. Open /acme-corp/admin
-2. Go to MongoDB → dashboardconfigs
-3. Edit any field like:
-
-json "label": "Overview" 
-
-Change to:
-
-json "label": "🚀 Analytics" 
-
-4. Refresh → UI updates instantly
+| User | Email | Role | Access Scope |
+|---|---|---|---|
+| Alice Kumar | `alice@converseos.ai` | Admin | Full admin & workspace access |
+| Bob Chen | `bob@converseos.ai` | Admin / Member | Mixed access across workspaces |
+| Carol Singh | `carol@acme.com` | Member | Member access at Acme Corp |
 
 ---
 
-## 🔌 Integrations
+## 📊 Config-Driven Admin Dashboard
 
-### Shopify (mock)
-- Products
-- Orders
-- Revenue
+The ConverseOS admin dashboard is dynamically rendered from MongoDB configuration documents.
 
-### CRM (mock)
-- Customers
-- Pipeline
-- Risk analysis
+### Live Verification:
 
----
-
-## 🛡 Authorization
-
-- Server-side checks enforced  
-- Admin routes protected  
-- Access rules isolated in pure functions  
+1. Log in as **Alice Kumar** (`alice@converseos.ai`).
+2. Navigate to `/acme-corp/admin`.
+3. Modify the corresponding document in the `dashboardconfigs` MongoDB collection (e.g. edit a widget label or section name).
+4. Refresh the page to see the UI update instantly without code changes or redeployments.
 
 ---
 
-## 🤖 AI Flow
+## 📜 Roadmap Phases
 
-User → Route → Service → AI → Response
-
-- Controlled via service layer  
-- Fallback strategy implemented  
-
----
-
-## 📁 Project Structure
-
-app/ lib/ components/ hooks/ types/ scripts/
-
----
-
-## ⚙️ Challenges Faced
-
-- Handled Mongoose model caching issues during seeding  
-- Designed flexible MongoDB config schema  
-- Maintained strict separation across layers  
+- [x] **Phase 0**: Project Rebranding & Architecture Cleanup (`ConverseOS`)
+- [ ] **Phase 1**: Codebase Refactoring & Directory Re-organization
+- [ ] **Phase 2**: Enterprise Authentication & JWT Session Security
+- [ ] **Phase 3**: Organization & Multi-Tenant Team Management
+- [ ] **Phase 4**: Multi-Model AI Assistant Platform (Gemini, Claude, GPT, Local)
+- [ ] **Phase 5**: RAG Knowledge Base (PDF, Docs, Vector Storage)
+- [ ] **Phase 6**: AI Long-Term & Short-Term Memory
+- [ ] **Phase 7**: Multi-Agent System (LangGraph, MCP)
+- [ ] **Phase 8**: Drag & Drop Workflow Automation
+- [ ] **Phase 9**: Native Integrations (Slack, Shopify, CRM, GitHub)
+- [ ] **Phase 10**: Business Intelligence Analytics & Cost Tracking
 
 ---
 
-## 👤 About
+## 📄 License
 
-Built by a second-year engineering student as part of the Debales AI internship assignment.
-
-Tech Stack: Next.js · TypeScript · MongoDB · Tailwind · TanStack Query · Zod
+MIT License. Designed and engineered for production SaaS scalability.

@@ -18,10 +18,15 @@ function buildSystemPrompt(
   projectName: string
 ): string {
   const enabledIntegrations = integrations.filter((i) => i.enabled);
+  
+  const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   let systemPrompt = `You are an intelligent AI Sales Assistant for ${projectName}. 
 You help with product recommendations, order tracking, customer inquiries, and sales support.
-Be concise, helpful, and professional. Keep responses under 200 words unless asked for detail.`;
+Be concise, helpful, and professional. Keep responses under 200 words unless asked for detail.
+
+SYSTEM INFO:
+Today's real current date is ${currentDate}. Always use this as the true current date. Do NOT confuse historical order dates in the store data with today's date.`;
 
   if (enabledIntegrations.length > 0) {
     systemPrompt += `\n\nYou have access to the following live data:`;
@@ -78,7 +83,7 @@ export async function generateAIResponse(
       );
       return { content: result, steps };
     } catch (err) {
-      console.error("Gemini error, trying fallback:", err);
+      console.error("[Provider Error] Gemini generation failed:", err instanceof Error ? err.message : "Unknown error");
     }
   }
 
@@ -92,15 +97,12 @@ export async function generateAIResponse(
       );
       return { content: result, steps };
     } catch (err) {
-      console.error("OpenRouter error:", err);
+      console.error("[Provider Error] OpenRouter generation failed:", err instanceof Error ? err.message : "Unknown error");
     }
   }
 
-  // Final fallback — smart mock response
-  return {
-    content: generateMockResponse(userMessage, integrations, projectName),
-    steps,
-  };
+  // Throw error if all providers fail
+  throw new Error("AI_PROVIDER_FAILED");
 }
 
 async function callGemini(
@@ -109,7 +111,7 @@ async function callGemini(
   systemPrompt: string
 ): Promise<string> {
   const API_KEY = process.env.GEMINI_API_KEY;
-  const MODEL = "gemini-1.5-flash";
+  const MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash";
 
   const contents = [
     ...history.map((m) => ({
@@ -128,7 +130,7 @@ async function callGemini(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
+        systemInstruction: { parts: [{ text: systemPrompt }] },
         contents,
         generationConfig: {
           maxOutputTokens: 512,
@@ -139,13 +141,13 @@ async function callGemini(
   );
 
   if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`Gemini API error: ${err}`);
+    // Safely extract status without logging full HTML/payloads indiscriminately
+    throw new Error(`HTTP ${response.status} ${response.statusText}`);
   }
 
   const data = await response.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("No content from Gemini");
+  if (!text) throw new Error("No content returned from Gemini");
   return text;
 }
 
@@ -154,6 +156,7 @@ async function callOpenRouter(
   history: Array<{ role: "user" | "assistant"; content: string }>,
   systemPrompt: string
 ): Promise<string> {
+  const MODEL = process.env.OPENROUTER_MODEL || "mistralai/mistral-7b-instruct:free";
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",
     {
@@ -162,10 +165,10 @@ async function callOpenRouter(
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
         "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-        "X-Title": "Debales AI Assistant",
+        "X-Title": "ConverseOS AI Assistant",
       },
       body: JSON.stringify({
-        model: "mistralai/mistral-7b-instruct:free",
+        model: MODEL,
         messages: [
           { role: "system", content: systemPrompt },
           ...history,
@@ -176,39 +179,23 @@ async function callOpenRouter(
     }
   );
 
-  if (!response.ok) throw new Error("OpenRouter API error");
+  if (!response.ok) {
+    const errText = await response.text();
+    // Parse JSON error safely to prevent logging secrets, fallback to status
+    let safeError = `HTTP ${response.status}`;
+    try {
+      const parsed = JSON.parse(errText);
+      if (parsed.error && parsed.error.message) {
+        safeError += ` - ${parsed.error.message}`;
+      }
+    } catch {
+      safeError += ` ${response.statusText}`;
+    }
+    throw new Error(safeError);
+  }
+  
   const data = await response.json();
   return data.choices?.[0]?.message?.content ?? "I couldn't generate a response.";
 }
 
-function generateMockResponse(
-  message: string,
-  integrations: IIntegration[],
-  projectName: string
-): string {
-  const lowerMsg = message.toLowerCase();
-  const shopifyEnabled = integrations.find(
-    (i) => i.type === "shopify" && i.enabled
-  );
-  const crmEnabled = integrations.find((i) => i.type === "crm" && i.enabled);
 
-  if (
-    (lowerMsg.includes("product") || lowerMsg.includes("inventory")) &&
-    shopifyEnabled
-  ) {
-    return `Based on your Shopify store data, here are our top products:\n\n• **Wireless Pro Headphones** — $149.99 (23 in stock)\n• **Smart Watch Series 5** — $299.99 (8 in stock, low!)\n• **Bluetooth Speaker** — $79.99 (45 in stock)\n\nWould you like more details on any of these?`;
-  }
-
-  if (
-    (lowerMsg.includes("customer") || lowerMsg.includes("client")) &&
-    crmEnabled
-  ) {
-    return `I can see from your CRM that you have 3 high-value customers this week. Sarah Chen from TechCorp recently placed an order of $2,400. John Martinez from RetailPro has been inactive for 14 days — it might be worth reaching out!`;
-  }
-
-  if (lowerMsg.includes("order") && shopifyEnabled) {
-    return `Your latest order #1042 from Emily Davis is currently in transit — shipped 2 days ago and expected by Friday. Order #1041 for $89.99 was delivered yesterday. Is there a specific order you'd like to track?`;
-  }
-
-  return `Hello! I'm your AI Sales Assistant for **${projectName}**. I can help you with:\n\n• Product recommendations & inventory\n• Order tracking & management\n• Customer insights & CRM data\n• Sales analytics\n\nWhat would you like to know?`;
-}

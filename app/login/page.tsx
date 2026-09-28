@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks";
-import toast from "react-hot-toast";
+import { toast } from "@/components/ui/Toast";
 
 const USERS = [
   {
     id: null as string | null, // Will be filled from API
     name: "Alice Kumar",
-    email: "alice@debales.ai",
+    email: "alice@converseos.ai",
     role: "Admin",
     color: "#0ea5e9",
     initial: "A",
@@ -19,7 +19,7 @@ const USERS = [
   {
     id: null as string | null,
     name: "Bob Chen",
-    email: "bob@debales.ai",
+    email: "bob@converseos.ai",
     role: "Admin",
     color: "#8b5cf6",
     initial: "B",
@@ -43,6 +43,7 @@ export default function LoginPage() {
   const login = useLogin();
   const [users, setUsers] = useState(USERS);
   const [selecting, setSelecting] = useState<string | null>(null);
+  const [isFetchingUsers, setIsFetchingUsers] = useState(true);
 
   useEffect(() => {
     // Fetch seeded user IDs from the API
@@ -53,14 +54,15 @@ export default function LoginPage() {
           setUsers((prev) =>
             prev.map((u) => {
               const found = data.data.find(
-                (d: { email: string; _id: string }) => d.email === u.email
+                (d: { name: string; _id: string }) => d.name === u.name
               );
               return found ? { ...u, id: found._id } : u;
             })
           );
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setIsFetchingUsers(false));
   }, []);
 
   const handleLogin = async (userId: string | null, name: string) => {
@@ -72,7 +74,7 @@ export default function LoginPage() {
     try {
       await login.mutateAsync(userId);
       toast.success(`Welcome back, ${name}!`);
-      router.push("/acme-corp/chat");
+      window.location.href = "/acme-corp/chat";
     } catch {
       toast.error("Login failed. Did you run npm run seed?");
       setSelecting(null);
@@ -111,15 +113,15 @@ export default function LoginPage() {
               </svg>
             </div>
             <span
-              className="text-2xl font-bold text-white"
-              style={{ fontFamily: "'Syne', sans-serif" }}
+              className="text-[24px] font-[700] text-white tracking-tight"
+              
             >
-              Debales<span className="text-cyan-400">AI</span>
+              Converse<span className="text-cyan-400">OS</span>
             </span>
           </div>
           <h1
-            className="text-4xl font-bold text-white mb-3"
-            style={{ fontFamily: "'Syne', sans-serif" }}
+            className="text-[32px] font-[800] text-white mb-3 tracking-tight"
+            
           >
             Choose your account
           </h1>
@@ -134,8 +136,8 @@ export default function LoginPage() {
             <button
               key={user.email}
               onClick={() => handleLogin(user.id, user.name)}
-              disabled={!!selecting}
-              className="w-full text-left group"
+              disabled={isFetchingUsers || !!selecting}
+              className={`w-full text-left group ${isFetchingUsers ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{ animationDelay: `${i * 80}ms` }}
               data-testid={`login-user-${user.name.split(" ")[0].toLowerCase()}`}
             >
@@ -157,7 +159,7 @@ export default function LoginPage() {
                       border: `1px solid ${user.color}40`,
                     }}
                   >
-                    {selecting === user.id ? (
+                    {selecting !== null && selecting === user.id ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                       user.initial
@@ -167,7 +169,7 @@ export default function LoginPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-semibold text-white text-base" style={{ fontFamily: "'Syne', sans-serif" }}>
+                      <span className="text-[17px] font-[700] text-white" >
                         {user.name}
                       </span>
                       <span

@@ -1,6 +1,6 @@
 export const SHOPIFY_MOCK_DATA = {
   store: {
-    name: "Debales Store",
+    name: "ConverseOS Store",
     currency: "USD",
     totalProducts: 47,
     totalOrders: 1042,

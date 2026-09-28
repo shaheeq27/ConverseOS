@@ -89,3 +89,57 @@ export async function getMessageCount(projectId: string) {
   const convIds = conversations.map((c) => c._id);
   return MessageModel.countDocuments({ conversationId: { $in: convIds } });
 }
+
+export async function getWeeklyActivity(projectId: string) {
+  await connectDB();
+  const conversations = await ConversationModel.find({ projectId })
+    .select("_id")
+    .lean();
+  const convIds = conversations.map((c) => c._id);
+
+  const today = new Date();
+  const dates: { dateString: string; count: number }[] = [];
+  
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateString = d.toISOString().split("T")[0]; // YYYY-MM-DD
+    dates.push({ dateString, count: 0 });
+  }
+
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 6);
+  startDate.setHours(0, 0, 0, 0);
+
+  const agg = await MessageModel.aggregate([
+    {
+      $match: {
+        conversationId: { $in: convIds },
+        createdAt: { $gte: startDate }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+        },
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+
+  agg.forEach((item) => {
+    const match = dates.find((d) => d.dateString === item._id);
+    if (match) {
+      match.count = item.count;
+    }
+  });
+
+  return dates.map(d => ({ date: d.dateString, count: d.count }));
+}
+
+export async function deleteConversation(conversationId: string) {
+  await connectDB();
+  await MessageModel.deleteMany({ conversationId });
+  await ConversationModel.findByIdAndDelete(conversationId);
+}

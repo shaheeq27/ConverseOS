@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { connectDB } from "@/lib/db/connect";
-import UserModel from "@/lib/db/models/User";
+import { connectDB } from "@/server/db/connect";
+import UserModel from "@/server/db/models/User";
+import {
+  createDBSession,
+  revokeDBSession,
+  SESSION_COOKIE,
+  SESSION_MAX_AGE_SECONDS,
+} from "@/server/auth/session";
 import { LoginSchema } from "@/lib/zod/schemas";
-import { SESSION_COOKIE } from "@/lib/auth/session";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,21 +19,21 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
-    const user = await UserModel.findById(parsed.data.userId).lean();
+    const user = await UserModel.findOne({
+      _id: parsed.data.userId,
+      deletedAt: null,
+    }).lean();
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const cookieStore = cookies();
-    cookieStore.set(SESSION_COOKIE, user._id.toString(), {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
+    const sessionToken = await createDBSession(user._id.toString(), {
+      ipAddress: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
+      userAgent: req.headers.get("user-agent") ?? undefined,
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       data: {
         id: user._id.toString(),
         name: user.name,
@@ -37,14 +41,29 @@ export async function POST(req: NextRequest) {
         avatarColor: user.avatarColor,
       },
     });
+
+    response.cookies.set(SESSION_COOKIE, sessionToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production" && req.nextUrl.protocol === "https:",
+      maxAge: SESSION_MAX_AGE_SECONDS,
+      path: "/",
+    });
+
+    return response;
   } catch (err) {
     console.error("[AUTH] Login error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
-export async function DELETE() {
-  const cookieStore = cookies();
-  cookieStore.delete(SESSION_COOKIE);
-  return NextResponse.json({ data: { success: true } });
+export async function DELETE(req: NextRequest) {
+  const token = req.cookies.get(SESSION_COOKIE)?.value;
+  if (token) {
+    await revokeDBSession(token);
+  }
+
+  const response = NextResponse.json({ data: { success: true } });
+  response.cookies.delete(SESSION_COOKIE);
+  return response;
 }

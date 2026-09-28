@@ -1,8 +1,12 @@
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
+import { connectDB } from "@/server/db/connect";
+import UserModel from "@/server/db/models/User";
+import MembershipModel from "@/server/db/models/Membership";
+import { createOrganization } from "@/server/services/organization.service";
+import { createWorkspace } from "@/server/services/workspace.service";
 dotenv.config({ path: ".env" });
 
-// We inline models to avoid Next.js module resolution issues
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
@@ -12,12 +16,25 @@ if (!MONGODB_URI) {
 
 async function seed() {
   console.log("🌱  Connecting to MongoDB...");
-  await mongoose.connect(MONGODB_URI!);
+  await connectDB();
 
   // ──────────────────────────────────────────────
   // Clean existing data
   // ──────────────────────────────────────────────
-  const collections = ["users", "projects", "productinstances", "conversations", "messages", "dashboardconfigs"];
+  const collections = [
+    "sessions",
+    "memberships",
+    "workspaces",
+    "organizationsettings",
+    "organizations",
+    "invites",
+    "users",
+    "projects",
+    "productinstances",
+    "conversations",
+    "messages",
+    "dashboardconfigs",
+  ];
   for (const col of collections) {
     try {
       await mongoose.connection.dropCollection(col);
@@ -30,32 +47,76 @@ async function seed() {
   // ──────────────────────────────────────────────
   // Users
   // ──────────────────────────────────────────────
-  const UserSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    avatarColor: String,
-  }, { timestamps: true });
-  const User = mongoose.models.User ?? mongoose.model("User", UserSchema);
-
-  const alice = await User.create({
+  const alice = await UserModel.create({
     name: "Alice Kumar",
-    email: "alice@debales.ai",
+    email: "alice@converseos.ai",
     avatarColor: "#0ea5e9",
   });
 
-  const bob = await User.create({
+  const bob = await UserModel.create({
     name: "Bob Chen",
-    email: "bob@debales.ai",
+    email: "bob@converseos.ai",
     avatarColor: "#8b5cf6",
   });
 
-  const carol = await User.create({
+  const carol = await UserModel.create({
     name: "Carol Singh",
     email: "carol@acme.com",
     avatarColor: "#10b981",
   });
 
   console.log("👤  Created users: Alice (admin), Bob (admin), Carol (member)");
+
+  // ──────────────────────────────────────────────
+  // Canonical V0.3.1 organization/workspace scope
+  // ──────────────────────────────────────────────
+  const acmeOrganization = await createOrganization({
+    name: "Acme Corp",
+    slug: "acme-corp",
+    userId: alice._id.toString(),
+  });
+  const acmeWorkspace = await createWorkspace({
+    orgId: acmeOrganization._id.toString(),
+    name: "Primary Workspace",
+    slug: "primary",
+    description: "Acme Corp's primary workspace",
+    userId: alice._id.toString(),
+  });
+  await MembershipModel.create([
+    {
+      userId: bob._id,
+      orgId: acmeOrganization._id,
+      workspaceId: acmeWorkspace._id,
+      role: "admin",
+    },
+    {
+      userId: carol._id,
+      orgId: acmeOrganization._id,
+      workspaceId: acmeWorkspace._id,
+      role: "member",
+    },
+  ]);
+
+  const techflowOrganization = await createOrganization({
+    name: "TechFlow",
+    slug: "techflow",
+    userId: alice._id.toString(),
+  });
+  const techflowWorkspace = await createWorkspace({
+    orgId: techflowOrganization._id.toString(),
+    name: "Primary Workspace",
+    slug: "primary",
+    description: "TechFlow's primary workspace",
+    userId: alice._id.toString(),
+  });
+  await MembershipModel.create({
+    userId: bob._id,
+    orgId: techflowOrganization._id,
+    workspaceId: techflowWorkspace._id,
+    role: "member",
+  });
+
+  console.log("🔐  Created canonical organizations, workspaces, and memberships");
 
   // ──────────────────────────────────────────────
   // Projects

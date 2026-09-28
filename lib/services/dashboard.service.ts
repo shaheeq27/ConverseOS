@@ -4,6 +4,7 @@ import {
   getConversationCount,
   getMessageCount,
   getRecentMessages,
+  getWeeklyActivity,
 } from "./conversation.service";
 import {
   getAllProductInstances,
@@ -31,7 +32,7 @@ export async function updateDashboardConfig(
 }
 
 export async function getDashboardStats(projectId: string, slug: string) {
-  const [convCount, msgCount, recentMsgs, project, productInstances, users] =
+  const [convCount, msgCount, recentMsgs, project, productInstances, users, activity] =
     await Promise.all([
       getConversationCount(projectId),
       getMessageCount(projectId),
@@ -50,6 +51,7 @@ export async function getDashboardStats(projectId: string, slug: string) {
       })
         .select("name email avatarColor")
         .lean(),
+      getWeeklyActivity(projectId),
     ]);
 
   const integrations = productInstances.flatMap((pi) => pi.integrations);
@@ -61,6 +63,7 @@ export async function getDashboardStats(projectId: string, slug: string) {
       memberCount: project?.members.length ?? 0,
       activeUsers: users.length,
     },
+    activity,
     recentMessages: recentMsgs,
     integrations,
     members: project?.members ?? [],

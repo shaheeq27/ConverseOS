@@ -42,6 +42,6 @@ ProductInstanceSchema.index({ projectId: 1, namespace: 1 });
 
 const ProductInstanceModel: Model<IProductInstance> =
   mongoose.models.ProductInstance ??
-  mongoose.model<IProductInstance>("ProductInstance", ProductInstanceSchema);
+  mongoose.model<IProductInstance>("ProductInstance", ProductInstanceSchema, "productinstanceseeds");
 
 export default ProductInstanceModel;
