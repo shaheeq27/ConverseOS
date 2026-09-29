@@ -13,7 +13,11 @@ export async function GET() {
     return NextResponse.json({
       data: users.map((u) => ({ ...u, _id: u._id.toString() })),
     });
-  } catch {
-    return NextResponse.json({ data: [] });
+  } catch (error) {
+    console.error("[API_AUTH_USERS] Database error:", error);
+    return NextResponse.json(
+      { error: "Database connection or query failed." },
+      { status: 500 }
+    );
   }
 }

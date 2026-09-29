@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks";
 import { toast } from "@/components/ui/Toast";
 
 const USERS = [
   {
-    id: null as string | null, // Will be filled from API
+    id: null as string | null,
     name: "Alice Kumar",
     email: "alice@converseos.ai",
     role: "Admin",
@@ -44,13 +44,19 @@ export default function LoginPage() {
   const [users, setUsers] = useState(USERS);
   const [selecting, setSelecting] = useState<string | null>(null);
   const [isFetchingUsers, setIsFetchingUsers] = useState(true);
+  const [dbError, setDbError] = useState(false);
 
   useEffect(() => {
-    // Fetch seeded user IDs from the API
     fetch("/api/auth/users")
-      .then((r) => r.json())
+      .then(async (r) => {
+        if (!r.ok) {
+          setDbError(true);
+          return null;
+        }
+        return r.json();
+      })
       .then((data) => {
-        if (data.data) {
+        if (data && data.data) {
           setUsers((prev) =>
             prev.map((u) => {
               const found = data.data.find(
@@ -61,13 +67,19 @@ export default function LoginPage() {
           );
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        setDbError(true);
+      })
       .finally(() => setIsFetchingUsers(false));
   }, []);
 
   const handleLogin = async (userId: string | null, name: string) => {
     if (!userId) {
-      toast.error("Please run the seed script first: npm run seed");
+      if (dbError) {
+        toast.error("Database connection failed. Please try again later.");
+      } else {
+        toast.error("Unable to load this account. Please try again.");
+      }
       return;
     }
     setSelecting(userId);
@@ -76,7 +88,7 @@ export default function LoginPage() {
       toast.success(`Welcome back, ${name}!`);
       window.location.href = "/acme-corp/chat";
     } catch {
-      toast.error("Login failed. Did you run npm run seed?");
+      toast.error("Login failed. Check server logs or database connection.");
       setSelecting(null);
     }
   };
@@ -112,17 +124,11 @@ export default function LoginPage() {
                 <path d="M2 6l8 4 8-4M10 10v8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </div>
-            <span
-              className="text-[24px] font-[700] text-white tracking-tight"
-              
-            >
+            <span className="text-[24px] font-[700] text-white tracking-tight">
               Converse<span className="text-cyan-400">OS</span>
             </span>
           </div>
-          <h1
-            className="text-[32px] font-[800] text-white mb-3 tracking-tight"
-            
-          >
+          <h1 className="text-[32px] font-[800] text-white mb-3 tracking-tight">
             Choose your account
           </h1>
           <p className="text-[#9090a8] text-sm">
@@ -169,7 +175,7 @@ export default function LoginPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[17px] font-[700] text-white" >
+                      <span className="text-[17px] font-[700] text-white">
                         {user.name}
                       </span>
                       <span
@@ -209,13 +215,15 @@ export default function LoginPage() {
         </div>
 
         {/* Footer note */}
-        <p className="text-center text-[#5a5a72] text-xs mt-8">
-          Run{" "}
-          <code className="bg-white/5 px-2 py-0.5 rounded text-[#9090a8] font-mono">
-            npm run seed
-          </code>{" "}
-          if users don&apos;t appear above
-        </p>
+        {dbError ? (
+          <p className="text-center text-red-400 text-xs mt-8 font-medium">
+            Database connection failed. Please check Vercel logs or MongoDB network access.
+          </p>
+        ) : (!isFetchingUsers && users.some((u) => !u.id)) ? (
+          <p className="text-center text-[#5a5a72] text-xs mt-8">
+            Unable to load demo accounts. Please try again.
+          </p>
+        ) : null}
       </div>
     </div>
   );
