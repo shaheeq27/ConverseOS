@@ -2,6 +2,12 @@
 
 > **ConverseOS** is a production-ready, enterprise-grade AI workspace enabling organizations to create, deploy, manage, and orchestrate intelligent AI assistants, knowledge bases, workflows, and real-time business integrations.
 
+### 🎬 ConverseOS Launch Video
+
+> See ConverseOS in action — a multi-tenant AI sales assistant platform built for autonomous AI workflows.
+
+[▶️ Watch the ConverseOS Launch Video](./brag-output/launch-video.mp4)
+
 ## 🚀 Live Demo
 
 <p align="center">
