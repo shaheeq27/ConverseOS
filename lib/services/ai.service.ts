@@ -111,7 +111,8 @@ async function callGemini(
   systemPrompt: string
 ): Promise<string> {
   const API_KEY = process.env.GEMINI_API_KEY;
-  const MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const rawModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const MODEL = rawModel.replace(/^google\//, "");
 
   const contents = [
     ...history.map((m) => ({
@@ -156,7 +157,7 @@ async function callOpenRouter(
   history: Array<{ role: "user" | "assistant"; content: string }>,
   systemPrompt: string
 ): Promise<string> {
-  const MODEL = process.env.OPENROUTER_MODEL || "mistralai/mistral-7b-instruct:free";
+  const MODEL = process.env.OPENROUTER_MODEL || "inclusionai/ling-3.0-flash-sante:free";
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",
     {
