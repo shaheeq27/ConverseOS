@@ -110,9 +110,10 @@ async function callGemini(
   history: Array<{ role: "user" | "assistant"; content: string }>,
   systemPrompt: string
 ): Promise<string> {
-  const API_KEY = process.env.GEMINI_API_KEY;
-  const rawModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-  const MODEL = rawModel.replace(/^google\//, "");
+  const API_KEY = (process.env.GEMINI_API_KEY || "").trim();
+  let MODEL = (process.env.GEMINI_MODEL || "gemini-1.5-flash").trim();
+  MODEL = MODEL.replace(/^google\//, ""); // Remove OpenRouter-style prefixes
+  if (MODEL.includes("/")) MODEL = "gemini-1.5-flash"; // Fallback if still invalid for Gemini REST URL
 
   const contents = [
     ...history.map((m) => ({
@@ -157,7 +158,8 @@ async function callOpenRouter(
   history: Array<{ role: "user" | "assistant"; content: string }>,
   systemPrompt: string
 ): Promise<string> {
-  const MODEL = process.env.OPENROUTER_MODEL || "inclusionai/ling-3.0-flash-sante:free";
+  let MODEL = (process.env.OPENROUTER_MODEL || "inclusionai/ling-3.0-flash-sante:free").trim();
+  if (MODEL === "mistralai/mistral-7b-instruct:free") MODEL = "inclusionai/ling-3.0-flash-sante:free";
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",
     {
