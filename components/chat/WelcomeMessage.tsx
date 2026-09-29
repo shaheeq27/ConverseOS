@@ -25,7 +25,7 @@ export function WelcomeMessage({ projectName }: { projectName: string }) {
         {suggestions.map((s) => (
           <button
             key={s}
-            className="text-left text-xs text-[#9090a8] bg-white/5 hover:bg-white/8 border border-white/5 hover:border-white/10 rounded-xl px-3 py-2.5 transition-all duration-150 hover:text-white"
+            className="cursor-glow cursor-glow-sm text-left text-xs text-[#9090a8] bg-white/5 hover:bg-white/8 border border-white/5 hover:border-white/10 rounded-xl px-3 py-2.5 transition-all duration-150 hover:text-white"
           >
             {s}
           </button>

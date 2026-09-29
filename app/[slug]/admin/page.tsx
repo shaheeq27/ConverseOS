@@ -265,7 +265,7 @@ function StatCard({ label, value, dataKey }: { label: string; value: number; dat
   const meta = STAT_META[dataKey] ?? { color: "#22d3ee", icon: "📊" };
   return (
     <div
-      className="glass rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-all duration-200 relative overflow-hidden group"
+      className="cursor-glow glass rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-all duration-200 relative overflow-hidden group"
       data-testid={`stat-${dataKey}`}
     >
       <div
@@ -303,7 +303,7 @@ function getIntegrationIcon(type: string): string {
 
 function IntegrationStatusCard({ integrations }: { integrations: Array<{ type: string; name: string; enabled: boolean }> }) {
   return (
-    <div className="glass rounded-2xl p-5 border border-white/5" data-testid="integration-status-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5" data-testid="integration-status-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">🔌</span>
         <span className="text-sm font-semibold text-white" >
@@ -356,7 +356,7 @@ function IntegrationToggleCard({
   };
 
   return (
-    <div className="glass rounded-2xl p-5 border border-white/5" data-testid="integration-toggle-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5" data-testid="integration-toggle-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">⚙️</span>
         <span className="text-sm font-semibold text-white" >
@@ -395,7 +395,7 @@ function MessageLogCard({
   label: string;
 }) {
   return (
-    <div className="glass rounded-2xl p-5 border border-white/5 md:col-span-2 xl:col-span-3" data-testid="message-log-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5 md:col-span-2 xl:col-span-3" data-testid="message-log-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">📋</span>
         <span className="text-sm font-semibold text-white" >
@@ -448,7 +448,7 @@ function ActivityChartCard({ label, activity }: { label: string, activity?: Arra
   const max = Math.max(...bars, 10);
 
   return (
-    <div className="glass rounded-2xl p-5 border border-white/5" data-testid="activity-chart-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5" data-testid="activity-chart-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">📈</span>
         <span className="text-sm font-semibold text-white" >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks";
 import { toast } from "@/components/ui/Toast";
@@ -94,7 +95,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Back to Home Navigation — isolated from flex flow */}
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-50">
+        <Link
+          href="/"
+          aria-label="Back to Home"
+          className="cursor-glow cursor-glow-sm inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-[#9090a8] bg-white/[0.03] border border-white/10 hover:text-white hover:border-cyan-500/30 hover:bg-white/[0.08] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+        >
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 4L4 8l6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span>Back to Home</span>
+        </Link>
+      </div>
+
       {/* Background effects */}
       <div
         className="gradient-blob w-[500px] h-[500px] opacity-20"
@@ -147,7 +162,7 @@ export default function LoginPage() {
               style={{ animationDelay: `${i * 80}ms` }}
               data-testid={`login-user-${user.name.split(" ")[0].toLowerCase()}`}
             >
-              <div className="glass glass-hover rounded-2xl p-5 transition-all duration-300 border border-white/5 hover:border-white/10 group-hover:translate-y-[-1px] relative overflow-hidden">
+              <div className="cursor-glow glass glass-hover rounded-2xl p-5 transition-all duration-300 border border-white/5 hover:border-white/10 group-hover:translate-y-[-1px] relative overflow-hidden">
                 {/* Hover glow */}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"

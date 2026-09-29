@@ -72,7 +72,7 @@ function ConversationItem({
       <Link
         href={`/${slug}/chat/${conv._id}`}
         className={clsx(
-          "flex flex-col gap-0.5 px-3 py-2 rounded-lg transition-all duration-150 border border-transparent pr-8",
+          "cursor-glow cursor-glow-sm flex flex-col gap-0.5 px-3 py-2 rounded-lg transition-all duration-150 border border-transparent pr-8",
           isActive
             ? "sidebar-item-active"
             : "hover:bg-white/5 hover:border-white/5 text-[#9090a8] hover:text-white"
@@ -369,7 +369,7 @@ function NavItem({
       href={href}
       data-testid={testId}
       className={clsx(
-        "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 border",
+        "cursor-glow cursor-glow-sm flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 border",
         active
           ? "sidebar-item-active border-cyan-400/20"
           : "border-transparent hover:bg-white/5 hover:border-white/5 text-[#9090a8] hover:text-white"

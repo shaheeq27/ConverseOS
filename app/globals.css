@@ -259,3 +259,137 @@ input:checked + .toggle-slider::before {
   transform: translateX(20px);
   background: var(--color-accent-cyan);
 }
+
+/* ─── Cursor-Reactive Surface Glow ─── */
+.cursor-glow {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cursor-glow:hover {
+  --glow-opacity: 1;
+}
+
+.cursor-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--glow-opacity, 0);
+  background: radial-gradient(
+    300px circle at var(--glow-x) var(--glow-y),
+    rgba(99, 102, 241, 0.08) 0%,
+    rgba(34, 211, 238, 0.04) 35%,
+    transparent 70%
+  );
+  transition: opacity 0.3s ease;
+}
+
+/* Border highlight layer */
+.cursor-glow::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--glow-opacity, 0);
+  background: radial-gradient(
+    400px circle at var(--glow-x) var(--glow-y),
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(139, 92, 246, 0.12) 25%,
+    transparent 60%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+  transition: opacity 0.3s ease;
+}
+
+/* Tighter glow for smaller elements like buttons */
+.cursor-glow-sm::before {
+  background: radial-gradient(
+    150px circle at var(--glow-x) var(--glow-y),
+    rgba(99, 102, 241, 0.10) 0%,
+    rgba(34, 211, 238, 0.05) 40%,
+    transparent 70%
+  );
+}
+
+.cursor-glow-sm::after {
+  background: radial-gradient(
+    200px circle at var(--glow-x) var(--glow-y),
+    rgba(99, 102, 241, 0.30) 0%,
+    rgba(139, 92, 246, 0.15) 30%,
+    transparent 60%
+  );
+}
+
+/* Ensure card content stays above the glow layers */
+.cursor-glow > * {
+  position: relative;
+  z-index: 2;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .cursor-glow::before,
+  .cursor-glow::after {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-glow::before,
+  .cursor-glow::after {
+    display: none !important;
+  }
+}
+
+/* Global Ambient Brush Trail */
+.mouse-follow-container {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-particle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 240px;
+  margin-left: -120px;
+  margin-top: -120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(34, 211, 238, 0.10) 0%,
+    rgba(139, 92, 246, 0.05) 40%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .mouse-follow-container {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mouse-follow-container {
+    display: none !important;
+  }
+}

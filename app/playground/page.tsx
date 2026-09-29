@@ -52,7 +52,7 @@ export default function ComponentPlaygroundPage() {
   const [checkboxState, setCheckboxState] = useState(true);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-[#f0f0f5] p-8 max-w-7xl mx-auto selection:bg-cyan-500/30">
+    <div className="min-h-screen text-[#f0f0f5] p-8 max-w-7xl mx-auto selection:bg-cyan-500/30">
       {/* Header */}
       <header className="mb-12 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

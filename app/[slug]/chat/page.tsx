@@ -81,7 +81,7 @@ function NewChatButton({ slug }: { slug: string }) {
   return (
     <button
       onClick={startChat}
-      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+      className="cursor-glow cursor-glow-sm inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-white text-sm font-semibold hover:opacity-90 transition-opacity"
       
     >
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

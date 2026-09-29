@@ -3,6 +3,8 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ToastProvider } from "@/components/ui/Toast";
+import { MouseFollowGlow } from "@/components/ui/MouseFollowGlow";
+import { CursorGlow } from "@/components/ui/CursorGlow";
 
 export const metadata: Metadata = {
   title: "ConverseOS — The Enterprise AI Operating System",
@@ -18,6 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-[#0a0a0f] text-[#f0f0f5] antialiased">
+        <MouseFollowGlow />
+        <CursorGlow />
         <ThemeProvider>
           <Providers>
             {children}
