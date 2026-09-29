@@ -19,7 +19,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-[#0a0a0f] text-[#f0f0f5] antialiased">
+      {/* Inline script to set theme class before first paint — prevents flash */}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.classList.add('light');document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark');document.documentElement.classList.remove('light')}}catch(e){document.documentElement.classList.add('dark')}})();`,
+          }}
+        />
+      </head>
+      <body className="antialiased" style={{ background: 'var(--color-bg)', color: 'var(--color-text-primary)' }}>
         <MouseFollowGlow />
         <CursorGlow />
         <ThemeProvider>
@@ -32,4 +40,3 @@ export default function RootLayout({
     </html>
   );
 }
-

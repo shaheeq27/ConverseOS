@@ -63,8 +63,8 @@ export default function AdminDashboardPage({
               <path d="M10 6v4M10 14h.01M3 17h14L10 3 3 17z" stroke="#f43f5e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <p className="text-white font-semibold mb-1">Access Denied</p>
-          <p className="text-sm text-[#9090a8]">Admin access required</p>
+          <p className="text-[var(--color-text-primary)] font-semibold mb-1">Access Denied</p>
+          <p className="text-sm text-[var(--color-text-secondary)]">Admin access required</p>
         </div>
       </div>
     );
@@ -82,7 +82,7 @@ export default function AdminDashboardPage({
   if (!config) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-[#9090a8] text-sm">No dashboard config found. Check your MongoDB seed.</p>
+        <p className="text-[var(--color-text-secondary)] text-sm">No dashboard config found. Check your MongoDB seed.</p>
       </div>
     );
   }
@@ -98,7 +98,7 @@ export default function AdminDashboardPage({
   return (
     <div className="flex-1 overflow-y-auto" data-testid="admin-dashboard">
       {/* Top bar */}
-      <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between flex-shrink-0">
+      <div className="px-8 py-6 border-b border-[var(--color-border)] flex items-center justify-between flex-shrink-0">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 rounded-full bg-violet-400" />
@@ -107,13 +107,13 @@ export default function AdminDashboardPage({
             </span>
           </div>
           <h1
-            className="text-2xl font-bold text-white"
+            className="text-2xl font-bold text-[var(--color-text-primary)]"
             
             data-testid="dashboard-title"
           >
             {config.title}
           </h1>
-          <p className="text-sm text-[#9090a8] mt-0.5">
+          <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
             Layout driven by{" "}
             <code className="text-cyan-400 bg-cyan-400/10 px-1.5 py-0.5 rounded text-xs">
               dashboardconfigs
@@ -124,7 +124,7 @@ export default function AdminDashboardPage({
         <button
           onClick={handleRefresh}
           disabled={isFetching}
-          className="flex items-center gap-2 px-4 py-2 text-xs text-[#9090a8] hover:text-white bg-white/5 hover:bg-white/8 border border-white/5 rounded-xl transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] bg-[var(--white-alpha-05)] hover:bg-[var(--white-alpha-08)] border border-[var(--color-border)] rounded-xl transition-all disabled:opacity-50"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={clsx(isFetching && "animate-spin")}>
             <path d="M1 6a5 5 0 105-5 5 5 0 00-3.5 1.4M1 2.5V5h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -177,13 +177,13 @@ function DashboardSectionRenderer({
       <div className="flex items-center gap-3 mb-4">
         <SectionIcon icon={section.icon} />
         <h2
-          className="text-base font-bold text-white"
+          className="text-base font-bold text-[var(--color-text-primary)]"
           
         >
           {section.label}
         </h2>
-        <div className="flex-1 h-px bg-white/5" />
-        <span className="text-xs text-[#5a5a72]">{sortedWidgets.length} widget{sortedWidgets.length !== 1 ? "s" : ""}</span>
+        <div className="flex-1 h-px bg-[var(--white-alpha-05)]" />
+        <span className="text-xs text-[var(--color-text-muted)]">{sortedWidgets.length} widget{sortedWidgets.length !== 1 ? "s" : ""}</span>
       </div>
 
       {/* Widgets grid */}
@@ -265,7 +265,7 @@ function StatCard({ label, value, dataKey }: { label: string; value: number; dat
   const meta = STAT_META[dataKey] ?? { color: "#22d3ee", icon: "📊" };
   return (
     <div
-      className="cursor-glow glass rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-all duration-200 relative overflow-hidden group"
+      className="cursor-glow glass rounded-2xl p-5 border border-transparent brand-gradient-border hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] transition-all duration-300 relative overflow-hidden group"
       data-testid={`stat-${dataKey}`}
     >
       <div
@@ -286,7 +286,7 @@ function StatCard({ label, value, dataKey }: { label: string; value: number; dat
         >
           {value.toLocaleString()}
         </div>
-        <div className="text-sm text-[#9090a8]">{label}</div>
+        <div className="text-sm text-[var(--color-text-secondary)]">{label}</div>
       </div>
     </div>
   );
@@ -303,29 +303,29 @@ function getIntegrationIcon(type: string): string {
 
 function IntegrationStatusCard({ integrations }: { integrations: Array<{ type: string; name: string; enabled: boolean }> }) {
   return (
-    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5" data-testid="integration-status-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-transparent brand-gradient-border hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] transition-all duration-300 relative overflow-hidden group" data-testid="integration-status-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">🔌</span>
-        <span className="text-sm font-semibold text-white" >
+        <span className="text-sm font-semibold text-[var(--color-text-primary)]" >
           Integration Status
         </span>
       </div>
       <div className="space-y-3">
         {integrations.length === 0 && (
-          <p className="text-xs text-[#5a5a72]">No integrations configured</p>
+          <p className="text-xs text-[var(--color-text-muted)]">No integrations configured</p>
         )}
         {integrations.map((integ) => (
           <div key={integ.type} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm">{getIntegrationIcon(integ.type)}</span>
-              <span className="text-sm text-[#e0e0ed]">{integ.name}</span>
+              <span className="text-sm text-[var(--color-text-primary)]">{integ.name}</span>
             </div>
             <div
               className={clsx(
                 "text-xs px-2 py-0.5 rounded-full font-medium border",
                 integ.enabled
                   ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                  : "bg-white/5 text-[#5a5a72] border-white/5"
+                  : "bg-[var(--white-alpha-05)] text-[var(--color-text-muted)] border-[var(--color-border)]"
               )}
             >
               {integ.enabled ? "Active" : "Disabled"}
@@ -356,10 +356,10 @@ function IntegrationToggleCard({
   };
 
   return (
-    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5" data-testid="integration-toggle-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-transparent brand-gradient-border hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] transition-all duration-300 relative overflow-hidden group" data-testid="integration-toggle-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">⚙️</span>
-        <span className="text-sm font-semibold text-white" >
+        <span className="text-sm font-semibold text-[var(--color-text-primary)]" >
           Toggle Integrations
         </span>
       </div>
@@ -367,8 +367,8 @@ function IntegrationToggleCard({
         {integrations.map((integ) => (
           <div key={integ.type} className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-white">{integ.name}</div>
-              <div className="text-xs text-[#5a5a72] capitalize">{integ.type}</div>
+              <div className="text-sm text-[var(--color-text-primary)]">{integ.name}</div>
+              <div className="text-xs text-[var(--color-text-muted)] capitalize">{integ.type}</div>
             </div>
             <label className="toggle-switch">
               <input
@@ -395,22 +395,22 @@ function MessageLogCard({
   label: string;
 }) {
   return (
-    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5 md:col-span-2 xl:col-span-3" data-testid="message-log-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-transparent brand-gradient-border hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] transition-all duration-300 relative overflow-hidden group md:col-span-2 xl:col-span-3" data-testid="message-log-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">📋</span>
-        <span className="text-sm font-semibold text-white" >
+        <span className="text-sm font-semibold text-[var(--color-text-primary)]" >
           {label}
         </span>
-        <span className="ml-auto text-xs text-[#5a5a72]">{messages.length} messages</span>
+        <span className="ml-auto text-xs text-[var(--color-text-muted)]">{messages.length} messages</span>
       </div>
       {messages.length === 0 ? (
-        <p className="text-sm text-[#5a5a72] text-center py-4">No messages yet</p>
+        <p className="text-sm text-[var(--color-text-muted)] text-center py-4">No messages yet</p>
       ) : (
         <div className="space-y-2 max-h-48 overflow-y-auto">
           {messages.map((msg) => (
             <div
               key={msg._id}
-              className="flex items-start gap-3 py-2 border-b border-white/5 last:border-0"
+              className="flex items-start gap-3 py-2 border-b border-[var(--color-border)] last:border-0"
             >
               <span
                 className={clsx(
@@ -422,8 +422,8 @@ function MessageLogCard({
               >
                 {msg.role === "user" ? "User" : "AI"}
               </span>
-              <p className="text-xs text-[#9090a8] flex-1 truncate">{msg.content}</p>
-              <span className="text-[10px] text-[#5a5a72] flex-shrink-0">
+              <p className="text-xs text-[var(--color-text-secondary)] flex-1 truncate">{msg.content}</p>
+              <span className="text-[10px] text-[var(--color-text-muted)] flex-shrink-0">
                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </span>
             </div>
@@ -448,10 +448,10 @@ function ActivityChartCard({ label, activity }: { label: string, activity?: Arra
   const max = Math.max(...bars, 10);
 
   return (
-    <div className="cursor-glow glass rounded-2xl p-5 border border-white/5" data-testid="activity-chart-card">
+    <div className="cursor-glow glass rounded-2xl p-5 border border-transparent brand-gradient-border hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] transition-all duration-300 relative overflow-hidden group" data-testid="activity-chart-card">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-base">📈</span>
-        <span className="text-sm font-semibold text-white" >
+        <span className="text-sm font-semibold text-[var(--color-text-primary)]" >
           {label}
         </span>
       </div>
@@ -466,7 +466,7 @@ function ActivityChartCard({ label, activity }: { label: string, activity?: Arra
                 minHeight: "4px",
               }}
             />
-            <span className="text-[9px] text-[#5a5a72]">{days[i]}</span>
+            <span className="text-[9px] text-[var(--color-text-muted)]">{days[i]}</span>
             <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
               {val} msgs
             </div>
@@ -499,7 +499,7 @@ function SectionIcon({ icon }: { icon: string }) {
   };
 
   return (
-    <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
+    <div className="w-6 h-6 rounded-lg bg-[var(--white-alpha-05)] flex items-center justify-center">
       {icons[icon] ?? <span className="text-xs">●</span>}
     </div>
   );

@@ -52,9 +52,9 @@ export default function ComponentPlaygroundPage() {
   const [checkboxState, setCheckboxState] = useState(true);
 
   return (
-    <div className="min-h-screen text-[#f0f0f5] p-8 max-w-7xl mx-auto selection:bg-cyan-500/30">
+    <div className="min-h-screen text-[var(--color-text-primary)] p-8 max-w-7xl mx-auto selection:bg-cyan-500/30">
       {/* Header */}
-      <header className="mb-12 border-b border-white/5 pb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <header className="mb-12 border-b border-[var(--color-border)] pb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-3">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
@@ -170,7 +170,7 @@ export default function ComponentPlaygroundPage() {
             <Heading level={3} className="mb-4">
               Typography Hierarchy
             </Heading>
-            <div className="space-y-3 bg-[#12121c] p-6 rounded-2xl border border-white/5">
+            <div className="space-y-3 bg-[var(--card-bg)] p-6 rounded-2xl border border-[var(--color-border)]">
               <Heading level={1}>Heading 1 — Enterprise AI OS</Heading>
               <Heading level={2}>Heading 2 — Workspace Overview</Heading>
               <Heading level={3}>Heading 3 — AI Assistant Model</Heading>

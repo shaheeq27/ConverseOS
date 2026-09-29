@@ -43,8 +43,8 @@ export default function NewConversationPage({ params }: { params: { slug: string
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-6 h-6 border-2 border-white/10 border-t-cyan-400 rounded-full animate-spin" />
-        <p className="text-sm text-[#9090a8]">Creating conversation…</p>
+        <div className="w-6 h-6 border-2 border-[var(--color-border)] border-t-[var(--color-accent-cyan)] rounded-full animate-spin" />
+        <p className="text-sm text-[var(--color-text-secondary)]">Creating conversation…</p>
       </div>
     </div>
   );

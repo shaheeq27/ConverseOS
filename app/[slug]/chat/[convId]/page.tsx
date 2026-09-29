@@ -110,22 +110,22 @@ export default function ChatConversationPage({
   return (
     <div className="flex flex-col h-full" data-testid="chat-view">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 flex-shrink-0">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border)] flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400/20 to-violet-500/20 border border-white/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400/20 to-violet-500/20 border border-[var(--white-alpha-10)] flex items-center justify-center">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v7a1 1 0 01-1 1H9l-3 2v-2H3a1 1 0 01-1-1V3z" stroke="#22d3ee" strokeWidth="1.3" strokeLinejoin="round"/>
+              <path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v7a1 1 0 01-1 1H9l-3 2v-2H3a1 1 0 01-1-1V3z" stroke="var(--color-accent-cyan)" strokeWidth="1.3" strokeLinejoin="round"/>
             </svg>
           </div>
           <div>
-            <div className="text-sm font-semibold text-white" >
+            <div className="text-sm font-semibold text-[var(--color-text-primary)]" >
               AI Sales Assistant
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 status-online" />
-              <span className="text-xs text-[#5a5a72]">Online</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-emerald)] status-online" />
+              <span className="text-xs text-[var(--color-text-muted)]">Online</span>
               {enabledIntegrations.length > 0 && (
-                <span className="text-xs text-[#5a5a72]">
+                <span className="text-xs text-[var(--color-text-muted)]">
                   · {enabledIntegrations.map((i: {name:string}) => i.name).join(", ")} connected
                 </span>
               )}
@@ -139,11 +139,11 @@ export default function ChatConversationPage({
               className={clsx(
                 "flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border",
                 integration.enabled
-                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-                  : "bg-white/5 border-white/5 text-[#5a5a72]"
+                  ? "bg-[var(--color-emerald-bg)] border-[var(--color-emerald-border)] text-[var(--color-accent-emerald)]"
+                  : "bg-[var(--white-alpha-05)] border-[var(--white-alpha-05)] text-[var(--color-text-muted)]"
               )}
             >
-              <div className={clsx("w-1.5 h-1.5 rounded-full", integration.enabled ? "bg-emerald-400" : "bg-[#5a5a72]")} />
+              <div className={clsx("w-1.5 h-1.5 rounded-full", integration.enabled ? "bg-[var(--color-accent-emerald)]" : "bg-[var(--color-text-muted)]")} />
               {integration.name}
             </div>
           ))}

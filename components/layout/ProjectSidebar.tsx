@@ -1,4 +1,5 @@
 "use client";
+import { ConverseLogo } from "@/components/ui/ConverseLogo";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,6 +9,7 @@ import { SessionUser } from "@/types";
 import { toast } from "@/components/ui/Toast";
 import { clsx } from "clsx";
 import { useQueryClient } from "@tanstack/react-query";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface Props {
   slug: string;
@@ -75,12 +77,12 @@ function ConversationItem({
           "cursor-glow cursor-glow-sm flex flex-col gap-0.5 px-3 py-2 rounded-lg transition-all duration-150 border border-transparent pr-8",
           isActive
             ? "sidebar-item-active"
-            : "hover:bg-white/5 hover:border-white/5 text-[#9090a8] hover:text-white"
+            : "hover:bg-[var(--white-alpha-05)] hover:border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
         )}
       >
         <span className="text-xs font-medium truncate">{conv.title}</span>
         {conv.lastMessage && (
-          <span className="text-[11px] text-[#5a5a72] truncate">
+          <span className="text-[11px] text-[var(--color-text-muted)] truncate">
             {conv.lastMessage}
           </span>
         )}
@@ -91,12 +93,12 @@ function ConversationItem({
         showConfirm ? "opacity-100" : "opacity-0 group-hover:opacity-100 transition-opacity"
       )}>
         {showConfirm ? (
-          <div className="flex bg-[#1a1a24] p-1 rounded-md border border-white/10 shadow-lg items-center gap-1 z-10">
-            <span className="text-[9px] text-[#9090a8] px-1 whitespace-nowrap">Delete?</span>
+          <div className="flex bg-[var(--context-menu-bg)] p-1 rounded-md border border-[var(--white-alpha-10)] shadow-lg items-center gap-1 z-10">
+            <span className="text-[9px] text-[var(--color-text-secondary)] px-1 whitespace-nowrap">Delete?</span>
             <button
               onClick={handleCancel}
               disabled={isDeleting}
-              className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-white transition-colors"
+              className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--white-alpha-05)] hover:bg-[var(--white-alpha-10)] text-[var(--color-text-primary)] transition-colors"
             >
               No
             </button>
@@ -111,7 +113,7 @@ function ConversationItem({
         ) : (
           <button
             onClick={handleDelete}
-            className="p-1 rounded-md text-[#5a5a72] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            className="p-1 rounded-md text-[var(--color-text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-colors"
             title="Delete conversation"
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -148,16 +150,14 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
   return (
     <>
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0d0d15] w-full flex-shrink-0">
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-[var(--color-border)] bg-[var(--color-bg)] w-full flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2L2 6v8l8 4 8-4V6l-8-4z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-              <path d="M2 6l8 4 8-4M10 10v8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </div>
-          <div className="text-sm font-semibold text-white" >
-            {projectName}
+          <ConverseLogo variant="icon" className="w-10 h-10" />
+          <div className="flex flex-col">
+            <ConverseLogo variant="wordmark" className="h-4 w-auto mb-0.5" hideTagline />
+            <div className="text-sm font-semibold text-[var(--color-text-primary)]" >
+              {projectName}
+            </div>
           </div>
         </div>
         <button
@@ -165,7 +165,7 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
             setCollapsed(false);
             setMobileOpen(true);
           }}
-          className="text-[#5a5a72] hover:text-white transition-colors"
+          className="text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)] transition-colors"
           aria-label="Open menu"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -186,7 +186,7 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
       {/* Sidebar */}
       <aside
         className={clsx(
-          "flex flex-col border-r border-white/5 transition-all duration-300",
+          "flex flex-col border-r border-[var(--color-border)] transition-all duration-300",
           "fixed inset-y-0 left-0 z-50 md:relative md:z-auto",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
           collapsed ? "w-[260px] md:w-[60px]" : "w-[260px]"
@@ -195,18 +195,13 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
         data-testid="sidebar"
       >
         {/* Header */}
-        <div className="p-4 border-b border-white/5 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2L2 6v8l8 4 8-4V6l-8-4z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-              <path d="M2 6l8 4 8-4M10 10v8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </div>
+        <div className="p-4 border-b border-[var(--color-border)] flex items-center gap-3">
+          <ConverseLogo variant="icon" className="w-10 h-10 flex-shrink-0" />
           {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <div className="text-xs text-[#5a5a72] font-medium">ConverseOS</div>
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+              <ConverseLogo variant="wordmark" className="h-4 w-auto mb-0.5" hideTagline />
               <div
-                className="text-sm font-semibold text-white truncate"
+                className="text-sm font-semibold text-[var(--color-text-primary)] truncate"
                 
               >
                 {projectName}
@@ -215,7 +210,7 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="text-[#5a5a72] hover:text-white transition-colors ml-auto flex-shrink-0 hidden md:block"
+            className="text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)] transition-colors ml-auto flex-shrink-0 hidden md:block"
             aria-label="Toggle sidebar"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -230,7 +225,7 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
           </button>
           <button
             onClick={() => setMobileOpen(false)}
-            className="text-[#5a5a72] hover:text-white transition-colors ml-auto flex-shrink-0 md:hidden"
+            className="text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)] transition-colors ml-auto flex-shrink-0 md:hidden"
             aria-label="Close menu"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -266,12 +261,12 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
         {!collapsed && isOnChat && (
           <div className="flex-1 overflow-y-auto px-2 py-2" data-testid="conversation-list">
             <div className="flex items-center justify-between mb-2 px-2">
-              <span className="text-[10px] font-semibold text-[#5a5a72] uppercase tracking-widest">
+              <span className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-widest">
                 Recent Chats
               </span>
               <Link
                 href={`/${slug}/chat/new`}
-                className="text-[#5a5a72] hover:text-cyan-400 hover:bg-cyan-400/10 p-1 rounded transition-colors"
+                className="text-[var(--color-text-muted)] hover:text-cyan-400 hover:bg-cyan-400/10 p-1 rounded transition-colors"
                 title="New Chat"
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -281,8 +276,8 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
             </div>
             {conversations.length === 0 ? (
               <div className="px-2 py-4 text-center">
-                <p className="text-xs text-[#5a5a72]">No conversations yet</p>
-                <p className="text-xs text-[#5a5a72] mt-1">Start a new chat below</p>
+                <p className="text-xs text-[var(--color-text-muted)]">No conversations yet</p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1">Start a new chat below</p>
               </div>
             ) : (
               <div className="space-y-0.5">
@@ -303,16 +298,20 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
         {!collapsed && !isOnChat && <div className="flex-1" />}
         {collapsed && <div className="flex-1" />}
 
+        <div className="px-2 mb-2">
+          <ThemeToggle collapsed={collapsed} />
+        </div>
+
         {/* User section */}
-        <div className="p-3 border-t border-white/5">
+        <div className="p-3 border-t border-[var(--color-border)]">
           {collapsed ? (
             <button
               onClick={handleLogout}
-              className="w-full flex justify-center p-2 rounded-lg hover:bg-white/5 transition-colors"
+              className="w-full flex justify-center p-2 rounded-lg hover:bg-[var(--white-alpha-05)] transition-colors"
               title={user.name}
             >
               <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-[var(--color-text-primary)]"
                 style={{ background: user.avatarColor }}
               >
                 {user.name[0]}
@@ -321,18 +320,18 @@ export function ProjectSidebar({ slug, projectName, user, isAdmin }: Props) {
           ) : (
             <div className="flex items-center gap-3">
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold text-[var(--color-text-primary)] flex-shrink-0"
                 style={{ background: user.avatarColor }}
               >
                 {user.name[0]}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium text-white truncate">{user.name}</div>
-                <div className="text-[10px] text-[#5a5a72] truncate">{user.email}</div>
+                <div className="text-xs font-medium text-[var(--color-text-primary)] truncate">{user.name}</div>
+                <div className="text-[10px] text-[var(--color-text-muted)] truncate">{user.email}</div>
               </div>
               <button
                 onClick={handleLogout}
-                className="text-[#5a5a72] hover:text-[#f43f5e] transition-colors"
+                className="text-[var(--color-text-muted)] hover:text-[var(--color-accent-rose)] transition-colors"
                 title="Logout"
               >
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -372,7 +371,7 @@ function NavItem({
         "cursor-glow cursor-glow-sm flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 border",
         active
           ? "sidebar-item-active border-cyan-400/20"
-          : "border-transparent hover:bg-white/5 hover:border-white/5 text-[#9090a8] hover:text-white"
+          : "border-transparent hover:bg-[var(--white-alpha-05)] hover:border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
       )}
     >
       <span className={clsx("flex-shrink-0", active ? "text-cyan-400" : "")}>

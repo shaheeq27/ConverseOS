@@ -1,10 +1,12 @@
 "use client";
+import { ConverseLogo } from "@/components/ui/ConverseLogo";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks";
 import { toast } from "@/components/ui/Toast";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const USERS = [
   {
@@ -96,12 +98,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Theme Toggle — isolated from flex flow */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-50">
+        <ThemeToggle collapsed={true} />
+      </div>
       {/* Back to Home Navigation — isolated from flex flow */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-50">
         <Link
           href="/"
           aria-label="Back to Home"
-          className="cursor-glow cursor-glow-sm inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-[#9090a8] bg-white/[0.03] border border-white/10 hover:text-white hover:border-cyan-500/30 hover:bg-white/[0.08] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+          className="cursor-glow cursor-glow-sm inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--white-alpha-03)] border border-[var(--white-alpha-10)] hover:text-[var(--color-text-primary)] hover:border-cyan-500/30 hover:bg-[var(--white-alpha-08)] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
         >
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M10 4L4 8l6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -131,22 +137,12 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-2xl mx-auto px-6">
         {/* Logo */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 2L2 6v8l8 4 8-4V6l-8-4z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-                <path d="M2 6l8 4 8-4M10 10v8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <span className="text-[24px] font-[700] text-white tracking-tight">
-              Converse<span className="text-cyan-400">OS</span>
-            </span>
-          </div>
-          <h1 className="text-[32px] font-[800] text-white mb-3 tracking-tight">
+        <div className="text-center mb-12 flex flex-col items-center">
+          <ConverseLogo className="h-12 mb-6" variant="full" />
+          <h1 className="text-[32px] font-[800] text-[var(--color-text-primary)] mb-3 tracking-tight">
             Choose your account
           </h1>
-          <p className="text-[#9090a8] text-sm">
+          <p className="text-[var(--color-text-secondary)] text-sm">
             Demo login — select a user to explore the platform
           </p>
         </div>
@@ -162,7 +158,7 @@ export default function LoginPage() {
               style={{ animationDelay: `${i * 80}ms` }}
               data-testid={`login-user-${user.name.split(" ")[0].toLowerCase()}`}
             >
-              <div className="cursor-glow glass glass-hover rounded-2xl p-5 transition-all duration-300 border border-white/5 hover:border-white/10 group-hover:translate-y-[-1px] relative overflow-hidden">
+              <div className="cursor-glow glass glass-hover rounded-2xl p-5 transition-all duration-300 border border-transparent brand-gradient-border group-hover:-translate-y-1 group-hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] relative overflow-hidden">
                 {/* Hover glow */}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
@@ -190,7 +186,7 @@ export default function LoginPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[17px] font-[700] text-white">
+                      <span className="text-[17px] font-[700] text-[var(--color-text-primary)]">
                         {user.name}
                       </span>
                       <span
@@ -204,12 +200,12 @@ export default function LoginPage() {
                         {user.role}
                       </span>
                     </div>
-                    <p className="text-[#9090a8] text-sm">{user.description}</p>
+                    <p className="text-[var(--color-text-secondary)] text-sm">{user.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       {user.projects.map((p) => (
                         <span
                           key={p}
-                          className="text-xs text-[#5a5a72] bg-white/5 px-2 py-0.5 rounded-md"
+                          className="text-xs text-[var(--color-text-muted)] bg-[var(--white-alpha-05)] px-2 py-0.5 rounded-md"
                         >
                           {p}
                         </span>
@@ -218,7 +214,7 @@ export default function LoginPage() {
                   </div>
 
                   {/* Arrow */}
-                  <div className="text-[#5a5a72] group-hover:text-white group-hover:translate-x-1 transition-all duration-200">
+                  <div className="text-[var(--color-text-muted)] group-hover:text-white group-hover:translate-x-1 transition-all duration-200">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                       <path d="M7 10h6M10 7l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -235,7 +231,7 @@ export default function LoginPage() {
             Database connection failed. Please check Vercel logs or MongoDB network access.
           </p>
         ) : (!isFetchingUsers && users.some((u) => !u.id)) ? (
-          <p className="text-center text-[#5a5a72] text-xs mt-8">
+          <p className="text-center text-[var(--color-text-muted)] text-xs mt-8">
             Unable to load demo accounts. Please try again.
           </p>
         ) : null}

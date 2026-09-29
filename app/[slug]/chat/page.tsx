@@ -23,7 +23,7 @@ export default function ChatIndexPage({
       <div className="text-center max-w-md mx-auto px-6">
         {/* Animated icon */}
         <div className="relative w-20 h-20 mx-auto mb-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400/20 to-violet-600/20 border border-white/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400/20 to-violet-600/20 border border-[var(--white-alpha-10)] flex items-center justify-center">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
               <path
                 d="M6 10a3 3 0 013-3h18a3 3 0 013 3v12a3 3 0 01-3 3H22l-6 4v-4H9a3 3 0 01-3-3V10z"
@@ -31,27 +31,27 @@ export default function ChatIndexPage({
                 strokeWidth="1.5"
                 strokeLinejoin="round"
               />
-              <circle cx="12" cy="16" r="1.5" fill="#22d3ee" />
-              <circle cx="18" cy="16" r="1.5" fill="#8b5cf6" />
-              <circle cx="24" cy="16" r="1.5" fill="#10b981" />
+              <circle cx="12" cy="16" r="1.5" fill="var(--color-accent-cyan)" />
+              <circle cx="18" cy="16" r="1.5" fill="var(--color-accent-violet)" />
+              <circle cx="24" cy="16" r="1.5" fill="var(--color-accent-emerald)" />
               <defs>
                 <linearGradient id="grad" x1="0" y1="0" x2="36" y2="36">
-                  <stop stopColor="#22d3ee" />
-                  <stop offset="1" stopColor="#8b5cf6" />
+                  <stop stopColor="var(--color-accent-cyan)" />
+                  <stop offset="1" stopColor="var(--color-accent-violet)" />
                 </linearGradient>
               </defs>
             </svg>
           </div>
-          <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#0a0a0f] animate-pulse" />
+          <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--color-accent-emerald)] border-2 border-[var(--color-bg)] animate-pulse" />
         </div>
 
         <h2
-          className="text-2xl font-bold text-white mb-2"
+          className="text-2xl font-bold text-[var(--color-text-primary)] mb-2"
           
         >
           AI Sales Assistant
         </h2>
-        <p className="text-[#9090a8] text-sm mb-8 leading-relaxed">
+        <p className="text-[var(--color-text-secondary)] text-sm mb-8 leading-relaxed">
           Your intelligent assistant is ready. Ask about inventory, orders,
           customer insights, or anything else.
         </p>

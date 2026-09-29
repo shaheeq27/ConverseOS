@@ -8,15 +8,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-gradient-to-r from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/35 hover:brightness-110",
+          "brand-gradient-bg text-white border border-white/10 shadow-[0_0_15px_rgba(34,211,238,0.2)] hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:brightness-110 hover:-translate-y-[1px]",
         secondary:
-          "bg-white/10 text-white border border-white/10 hover:bg-white/15 hover:border-white/20",
+          "bg-[var(--white-alpha-05)] text-[var(--color-text-primary)] border border-[var(--white-alpha-10)] hover:bg-cyan-500/10 hover:border-cyan-500/50 hover:text-cyan-500",
         outline:
-          "border border-white/15 text-white bg-transparent hover:bg-white/5 hover:border-white/30",
+          "border border-[var(--white-alpha-15)] text-[var(--color-text-primary)] bg-transparent hover:bg-cyan-500/5 hover:border-cyan-500/50 hover:text-cyan-500",
         ghost:
-          "text-[#9090a8] hover:text-white hover:bg-white/5",
+          "text-[var(--color-text-secondary)] hover:text-cyan-500 hover:bg-cyan-500/10",
         danger:
-          "bg-rose-600/20 border border-rose-500/30 text-rose-300 hover:bg-rose-600/30",
+          "bg-rose-500/10 border border-rose-500/20 text-rose-500 hover:bg-rose-500/20 hover:border-rose-500/30",
       },
       size: {
         sm: "h-8 px-3 text-xs",
@@ -48,7 +48,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && (
-          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
+          <span className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin flex-shrink-0" />
         )}
         {children}
       </button>
